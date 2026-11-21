@@ -1,0 +1,166 @@
+/* ==========================================================================
+   SRI KUMARAN AGENCIES - AGRI BILLING SOFTWARE
+   A4 Standard GST Tax Invoice Stylesheet
+   ========================================================================== */
+
+@page {
+  size: A4 portrait;
+  margin: 8mm;
+}
+
+body.printing-a4 {
+  background: #fff !important;
+  color: #000 !important;
+  font-family: 'Noto Sans Tamil', 'Nirmala UI', sans-serif !important;
+}
+
+.a4-invoice {
+  width: 100%;
+  max-width: 195mm;
+  margin: 0 auto;
+  background: #fff;
+  color: #000;
+  font-family: 'Noto Sans Tamil', 'Nirmala UI', Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  box-sizing: border-box;
+  border: 1.5px solid #000;
+}
+
+.a4-header {
+  border-bottom: 1.5px solid #000;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.a4-shop-title {
+  font-size: 19px;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.a4-shop-tagline {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.a4-shop-address {
+  font-size: 10.5px;
+}
+
+.a4-meta-row {
+  display: flex;
+  border-bottom: 1.5px solid #000;
+}
+
+.a4-meta-left, .a4-meta-right {
+  flex: 1;
+  padding: 8px 12px;
+}
+
+.a4-meta-left {
+  border-right: 1.5px solid #000;
+}
+
+.a4-meta-item {
+  margin-bottom: 3px;
+}
+
+.a4-meta-label {
+  font-weight: bold;
+  display: inline-block;
+  min-width: 100px;
+}
+
+.a4-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.a4-items-table th, .a4-items-table td {
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000;
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+.a4-items-table th:last-child, .a4-items-table td:last-child {
+  border-right: none;
+}
+
+.a4-items-table th {
+  background-color: #f1f5f9;
+  font-weight: bold;
+  text-align: center;
+}
+
+.a4-totals-row {
+  display: flex;
+  border-bottom: 1.5px solid #000;
+}
+
+.a4-words-box {
+  flex: 1.4;
+  padding: 8px 12px;
+  border-right: 1.5px solid #000;
+}
+
+.a4-calc-box {
+  flex: 1;
+  padding: 6px 12px;
+}
+
+.a4-calc-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+  font-size: 10.5px;
+}
+
+.a4-grand-total-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: bold;
+  border-top: 1px solid #000;
+  padding-top: 4px;
+  margin-top: 4px;
+}
+
+.a4-tax-summary {
+  padding: 8px 12px;
+  border-bottom: 1.5px solid #000;
+}
+
+.a4-tax-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5px;
+  text-align: center;
+}
+
+.a4-tax-table th, .a4-tax-table td {
+  border: 1px solid #777;
+  padding: 4px 6px;
+}
+
+.a4-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px 8px 14px;
+}
+
+.a4-terms {
+  font-size: 9.5px;
+  color: #333;
+}
+
+.a4-sign {
+  text-align: center;
+  width: 200px;
+  padding-top: 36px;
+  border-top: 1px dashed #444;
+  font-weight: bold;
+}

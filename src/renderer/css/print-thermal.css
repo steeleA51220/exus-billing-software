@@ -1,0 +1,74 @@
+/* ==========================================================================
+   SRI KUMARAN AGENCIES - AGRI BILLING SOFTWARE
+   80mm Thermal Receipt Stylesheet
+   ========================================================================== */
+
+@page {
+  size: 80mm auto;
+  margin: 2mm;
+}
+
+body.printing-thermal {
+  background: #fff !important;
+  color: #000 !important;
+  font-family: 'Consolas', 'Courier New', monospace !important;
+}
+
+.thermal-receipt {
+  width: 72mm;
+  margin: 0 auto;
+  background: #fff;
+  color: #000;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.thermal-center {
+  text-align: center;
+}
+
+.thermal-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.thermal-sub {
+  font-size: 10px;
+}
+
+.thermal-divider {
+  border-top: 1px dashed #000;
+  margin: 4px 0;
+}
+
+.thermal-divider-double {
+  border-top: 1px double #000;
+  margin: 4px 0;
+}
+
+.thermal-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.thermal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+}
+
+.thermal-table th {
+  border-bottom: 1px dashed #000;
+  text-align: left;
+  padding: 2px 0;
+}
+
+.thermal-table td {
+  padding: 3px 0;
+}
+
+.thermal-total {
+  font-size: 13px;
+  font-weight: bold;
+}

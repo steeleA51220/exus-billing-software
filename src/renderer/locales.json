@@ -1,0 +1,218 @@
+{
+  "languages": {
+    "ta_en": {
+      "name": "தமிழ் + English",
+      "description": "Bilingual (Default)"
+    },
+    "ta": {
+      "name": "தமிழ் மட்டும்",
+      "description": "Tamil Only"
+    },
+    "en": {
+      "name": "English Only",
+      "description": "English Only"
+    }
+  },
+  "translations": {
+    "nav.dashboard": {
+      "ta_en": "முகப்பு (Dashboard)",
+      "ta": "முகப்பு",
+      "en": "Dashboard"
+    },
+    "nav.billing": {
+      "ta_en": "புதிய பில் (New Bill)",
+      "ta": "புதிய பில்",
+      "en": "New Bill"
+    },
+    "nav.products": {
+      "ta_en": "பொருட்கள் (Products)",
+      "ta": "பொருட்கள்",
+      "en": "Products"
+    },
+    "nav.customers": {
+      "ta_en": "வாடிக்கையாளர்கள் (Customers)",
+      "ta": "வாடிக்கையாளர்கள்",
+      "en": "Customers"
+    },
+    "nav.purchases": {
+      "ta_en": "கொள்முதல் (Purchases)",
+      "ta": "கொள்முதல்",
+      "en": "Purchases"
+    },
+    "nav.reports": {
+      "ta_en": "அறிக்கைகள் (Reports)",
+      "ta": "அறிக்கைகள்",
+      "en": "Reports"
+    },
+    "nav.settings": {
+      "ta_en": "அமைப்புகள் (Settings)",
+      "ta": "அமைப்புகள்",
+      "en": "Settings"
+    },
+    "nav.lock": {
+      "ta_en": "பூட்டு (Lock)",
+      "ta": "பூட்டு",
+      "en": "Lock Screen"
+    },
+    "dash.today_sales": {
+      "ta_en": "இன்றைய விற்பனை (Today Sales)",
+      "ta": "இன்றைய விற்பனை",
+      "en": "Today's Sales"
+    },
+    "dash.today_collection": {
+      "ta_en": "இன்றைய வசூல் (Today Collection)",
+      "ta": "இன்றைய வசூல்",
+      "en": "Today's Collection"
+    },
+    "dash.today_due": {
+      "ta_en": "இன்றைய பாக்கி (Today Due)",
+      "ta": "இன்றைய பாக்கி",
+      "en": "Today's Due"
+    },
+    "dash.low_stock": {
+      "ta_en": "குறைந்த இருப்பு எச்சரிக்கைகள் (Low Stock Alerts)",
+      "ta": "குறைந்த இருப்பு எச்சரிக்கைகள்",
+      "en": "Low Stock Alerts"
+    },
+    "dash.new_bill_btn": {
+      "ta_en": "⚡ புதிய பில் (New Bill F2)",
+      "ta": "⚡ புதிய பில் (F2)",
+      "en": "⚡ New Bill (F2)"
+    },
+    "dash.new_purchase_btn": {
+      "ta_en": "📦 புதிய கொள்முதல் (New Purchase)",
+      "ta": "📦 புதிய கொள்முதல்",
+      "en": "📦 New Purchase"
+    },
+    "dash.agri_stmt_btn": {
+      "ta_en": "🏛️ அரசு அறிக்கை (Agri Statement)",
+      "ta": "🏛️ அரசு அறிக்கை",
+      "en": "🏛️ Agri Statement"
+    },
+    "bill.customer_sec": {
+      "ta_en": "1. வாடிக்கையாளர் விவரம் (Customer Details)",
+      "ta": "1. வாடிக்கையாளர் விவரம்",
+      "en": "1. Customer Details"
+    },
+    "bill.cust_search_ph": {
+      "ta_en": "🔍 வாடிக்கையாளர் பெயர் / போன் தேடவும் (F4)...",
+      "ta": "🔍 வாடிக்கையாளர் பெயர் / போன் தேடவும்...",
+      "en": "🔍 Search customer by name or phone (F4)..."
+    },
+    "bill.prod_sec": {
+      "ta_en": "2. மருந்து / விதை தேடல் (Product Search)",
+      "ta": "2. மருந்து / விதை தேடல்",
+      "en": "2. Product Search"
+    },
+    "bill.prod_search_ph": {
+      "ta_en": "🔍 மருந்து பெயர் / விதை / HSN தட்டச்சு செய்யவும் (F4)...",
+      "ta": "🔍 மருந்து பெயர் / விதை / HSN தட்டச்சு செய்யவும்...",
+      "en": "🔍 Type product name, seed or HSN (F4)..."
+    },
+    "bill.save_btn": {
+      "ta_en": "💾 பில் சேமிக்க (Save Bill)",
+      "ta": "💾 பில் சேமிக்க",
+      "en": "💾 Save Bill"
+    },
+    "bill.save_print_btn": {
+      "ta_en": "🖨️ சேமி & பிரிண்ட் (Save & Print F9)",
+      "ta": "🖨️ சேமி & பிரிண்ட் (F9)",
+      "en": "🖨️ Save & Print (F9)"
+    },
+    "bill.clear_btn": {
+      "ta_en": "புதிய பில் (Clear / New Bill)",
+      "ta": "புதிய பில்",
+      "en": "Clear / New Bill"
+    },
+    "prod.search_ph": {
+      "ta_en": "🔍 மருந்து / விதை பெயர் அல்லது HSN தேடவும்...",
+      "ta": "🔍 மருந்து / விதை பெயர் அல்லது HSN தேடவும்...",
+      "en": "🔍 Search product name or HSN..."
+    },
+    "prod.add_btn": {
+      "ta_en": "+ புதிய பொருள் சேர்க்க (Add Product)",
+      "ta": "+ புதிய பொருள் சேர்க்க",
+      "en": "+ Add Product"
+    },
+    "prod.import_csv_btn": {
+      "ta_en": "📥 CSV இறக்குமதி (Bulk Import CSV)",
+      "ta": "📥 CSV இறக்குமதி",
+      "en": "📥 Bulk Import CSV"
+    },
+    "cust.search_ph": {
+      "ta_en": "🔍 வாடிக்கையாளர் பெயர், போன் அல்லது ஊர் தேடவும்...",
+      "ta": "🔍 வாடிக்கையாளர் பெயர், போன் அல்லது ஊர் தேடவும்...",
+      "en": "🔍 Search customer by name, phone or village..."
+    },
+    "cust.add_btn": {
+      "ta_en": "+ புதிய வாடிக்கையாளர் (+ Add Customer)",
+      "ta": "+ புதிய வாடிக்கையாளர்",
+      "en": "+ Add Customer"
+    },
+    "pur.search_ph": {
+      "ta_en": "🔍 பில் எண் அல்லது சப்ளையர் பெயர் தேடவும்...",
+      "ta": "🔍 பில் எண் அல்லது சப்ளையர் பெயர் தேடவும்...",
+      "en": "🔍 Search bill no or supplier..."
+    },
+    "pur.new_inward_btn": {
+      "ta_en": "+ புதிய கொள்முதல் வரவு (+ New Stock Inward)",
+      "ta": "+ புதிய கொள்முதல் வரவு",
+      "en": "+ New Stock Inward"
+    },
+    "pur.add_supplier_btn": {
+      "ta_en": "+ சப்ளையர் சேர்க்க (+ Add Supplier)",
+      "ta": "+ சப்ளையர் சேர்க்க",
+      "en": "+ Add Supplier"
+    },
+    "rep.tab_agri": {
+      "ta_en": "🏛️ அரசு அறிக்கை (Agri Dept Statement)",
+      "ta": "🏛️ அரசு அறிக்கை",
+      "en": "🏛️ Agri Dept Statement"
+    },
+    "rep.tab_daybook": {
+      "ta_en": "📅 விற்பனை குறிப்பேடு (Sales Day Book)",
+      "ta": "📅 விற்பனை குறிப்பேடு",
+      "en": "📅 Sales Day Book"
+    },
+    "rep.tab_gstr1": {
+      "ta_en": "📑 GST அறிக்கை (GSTR-1 Summary)",
+      "ta": "📑 GST அறிக்கை",
+      "en": "📑 GSTR-1 Summary"
+    },
+    "rep.tab_stock": {
+      "ta_en": "📦 இருப்பு மதிப்பு (Stock Valuation)",
+      "ta": "📦 இருப்பு மதிப்பு",
+      "en": "📦 Stock Valuation"
+    },
+    "rep.tab_outstanding": {
+      "ta_en": "👥 பாக்கி அறிக்கை (Customer Outstanding)",
+      "ta": "👥 பாக்கி அறிக்கை",
+      "en": "👥 Customer Outstanding"
+    },
+    "set.shop_details": {
+      "ta_en": "🏪 கடை விவரங்கள் (Shop Details)",
+      "ta": "🏪 கடை விவரங்கள்",
+      "en": "🏪 Shop Details"
+    },
+    "set.save_btn": {
+      "ta_en": "💾 விவரங்களை சேமிக்கவும் (Save Shop Details)",
+      "ta": "💾 விவரங்களை சேமிக்கவும்",
+      "en": "💾 Save Shop Details"
+    },
+    "set.lang_title": {
+      "ta_en": "🌐 மொழி அமைப்புகள் (Language Settings)",
+      "ta": "🌐 மொழி அமைப்புகள்",
+      "en": "🌐 Language Settings"
+    },
+    "set.about_title": {
+      "ta_en": "ℹ️ மென்பொருள் தகவல் (About Software)",
+      "ta": "ℹ️ மென்பொருள் தகவல்",
+      "en": "ℹ️ About Software"
+    },
+    "set.about_btn": {
+      "ta_en": "ℹ️ மென்பொருள் பற்றி (About Software)",
+      "ta": "ℹ️ மென்பொருள் பற்றி",
+      "en": "ℹ️ About Software"
+    }
+  }
+}

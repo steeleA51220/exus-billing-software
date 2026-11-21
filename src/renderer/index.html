@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Billing Software</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/print-a4.css" media="print">
+  <link rel="stylesheet" href="css/print-thermal.css" media="print">
+</head>
+<body>
+
+  <!-- ==================================================================== -->
+  <!-- FIRST-TIME SETUP: REGISTER SHOP OVERLAY                              -->
+  <!-- ==================================================================== -->
+  <div id="setup-overlay" style="display: none;">
+    <div class="setup-card">
+      <div class="lock-icon-circle" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">🏪</div>
+      <h2 class="lock-title" style="font-size: 22px; color: #fff;">Nexus Billing Software</h2>
+      <p class="lock-subtitle" style="margin-bottom: 22px;">முதல் முறை அமைப்பு: கடை பதிவு (First-Time Shop Registration)</p>
+
+      <form id="form-register-shop">
+        <div class="form-group" style="text-align: left; margin-bottom: 14px;">
+          <label class="form-label">கடை பெயர் (Shop Name) *</label>
+          <input type="text" class="form-control" id="setup-shop-name" placeholder="எ.கா. ஸ்ரீ குமரன் ஏஜென்சிஸ்" required value="ஸ்ரீ குமரன் ஏஜென்சிஸ்">
+        </div>
+
+        <div class="form-group" style="text-align: left; margin-bottom: 14px;">
+          <label class="form-label">கடை முகவரி (Address) *</label>
+          <textarea class="form-control" id="setup-shop-address" rows="2" placeholder="எ.கா. 69, கடைவீதி, முசிறி, திருச்சி - 621211" required>69, கடைவீதி, முசிறி (TK), திருச்சி (Dt) - 621211</textarea>
+        </div>
+
+        <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 14px;">
+          <div class="form-group" style="flex: 1; text-align: left;">
+            <label class="form-label">தொலைபேசி எண் (Phone) *</label>
+            <input type="text" class="form-control" id="setup-shop-phone" placeholder="9443123456" required value="9443123456">
+          </div>
+          <div class="form-group" style="flex: 1; text-align: left;">
+            <label class="form-label">GSTIN (வரி எண்)</label>
+            <input type="text" class="form-control" id="setup-shop-gstin" placeholder="33AAAAA0000A1Z5" value="33AAAAA0000A1Z5">
+          </div>
+        </div>
+
+        <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 22px;">
+          <div class="form-group" style="flex: 1; text-align: left;">
+            <label class="form-label">புதிய PIN (4 இலக்கம்) *</label>
+            <input type="password" class="form-control" id="setup-pin" maxlength="4" placeholder="••••" pattern="[0-9]{4}" required>
+          </div>
+          <div class="form-group" style="flex: 1; text-align: left;">
+            <label class="form-label">PIN உறுதிப்படுத்தவும் *</label>
+            <input type="password" class="form-control" id="setup-pin-confirm" maxlength="4" placeholder="••••" pattern="[0-9]{4}" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 15px; font-weight: bold;">
+          💾 சேமித்து தொடரவும் (Save & Continue) →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- PIN LOCK SCREEN OVERLAY                                              -->
+  <!-- ==================================================================== -->
+  <div id="lock-overlay">
+    <div class="lock-card">
+      <div class="lock-icon-circle">🔐</div>
+      <h2 class="lock-title">Nexus Billing Software</h2>
+      <p class="lock-subtitle">வணிக அமைப்பில் நுழைய PIN எண்ணை உள்ளிடவும் (Enter PIN to unlock)</p>
+
+      <div class="pin-display">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
+
+      <div class="keypad-grid">
+        <button class="key-btn" data-key="1">1</button>
+        <button class="key-btn" data-key="2">2</button>
+        <button class="key-btn" data-key="3">3</button>
+        <button class="key-btn" data-key="4">4</button>
+        <button class="key-btn" data-key="5">5</button>
+        <button class="key-btn" data-key="6">6</button>
+        <button class="key-btn" data-key="7">7</button>
+        <button class="key-btn" data-key="8">8</button>
+        <button class="key-btn" data-key="9">9</button>
+        <button class="key-btn action" id="btn-pin-clear">C</button>
+        <button class="key-btn" data-key="0">0</button>
+        <button class="key-btn action" id="btn-pin-backspace">⌫</button>
+      </div>
+
+      <div style="margin-top: 18px; font-size: 11px; color: var(--text-dim);">
+        ஆரம்ப PIN: <strong>1234</strong> (அமைப்புகளில் மாற்றிக்கொள்ளலாம்)
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MAIN APP CONTAINER                                                   -->
+  <!-- ==================================================================== -->
+  <div id="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+      <div class="brand-header">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1 id="sidebar-app-name" style="font-size: 15px; font-weight: 700; color: #fff; margin: 0; line-height: 1.2;">Nexus Billing</h1>
+          <p id="sidebar-shop-name" style="font-size: 11px; color: var(--primary); margin: 2px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;">ஸ்ரீ குமரன் ஏஜென்சிஸ்</p>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-link active" data-view="dashboard">
+            <span class="nav-left">
+              <span class="nav-icon">📊</span>
+              <span data-i18n="nav.dashboard">முகப்பு (Dashboard)</span>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="billing">
+            <span class="nav-left">
+              <span class="nav-icon">🧾</span>
+              <span data-i18n="nav.billing">புதிய பில் (New Bill)</span>
+            </span>
+            <span class="kbd-badge">F2</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="products">
+            <span class="nav-left">
+              <span class="nav-icon">📦</span>
+              <span data-i18n="nav.products">பொருட்கள் (Products)</span>
+            </span>
+            <span class="kbd-badge">F3</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="customers">
+            <span class="nav-left">
+              <span class="nav-icon">👥</span>
+              <span data-i18n="nav.customers">வாடிக்கையாளர்கள் (Customers)</span>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="purchases">
+            <span class="nav-left">
+              <span class="nav-icon">📥</span>
+              <span data-i18n="nav.purchases">கொள்முதல் (Purchases)</span>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="reports">
+            <span class="nav-left">
+              <span class="nav-icon">📑</span>
+              <span data-i18n="nav.reports">அறிக்கைகள் (Reports)</span>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="settings">
+            <span class="nav-left">
+              <span class="nav-icon">⚙️</span>
+              <span data-i18n="nav.settings">அமைப்புகள் (Settings)</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="shop-location">
+          <span>📍</span>
+          <span>முசிறி (TK), திருச்சி - 621211</span>
+        </div>
+        <div style="font-size: 10px; color: var(--text-dim);" id="sidebar-gstin">
+          GSTIN: 33AAAAA0000A1Z5
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+      
+      <!-- Top Navigation Header -->
+      <header id="top-header">
+        <div class="top-header-left">
+          <h2 class="page-title" id="page-title">டாஷ்போர்டு (Dashboard)</h2>
+          <span class="fy-pill" id="header-fy-badge">FY: 2026-27</span>
+        </div>
+        <div class="top-header-right">
+          <div class="live-clock" id="live-clock">00:00:00</div>
+          <button class="btn-lock" id="btn-lock-screen" title="திரையை பூட்டு (Lock Screen)">
+            <span>🔒</span>
+            <span data-i18n="nav.lock">பூட்டு (Lock)</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 1: DASHBOARD                                                -->
+      <!-- ================================================================ -->
+      <section class="view-container active" id="view-dashboard">
+        <!-- 4 KPI Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card metric-sales">
+            <div class="metric-icon">💰</div>
+            <div class="metric-details">
+              <p data-i18n="dash.today_sales">இன்றைய விற்பனை (Today Sales)</p>
+              <div class="metric-value" id="stat-today-sales">₹0.00</div>
+            </div>
+          </div>
+
+          <div class="metric-card metric-collection">
+            <div class="metric-icon">📥</div>
+            <div class="metric-details">
+              <p data-i18n="dash.today_collection">இன்றைய வரவு (Collection)</p>
+              <div class="metric-value" id="stat-today-collection">₹0.00</div>
+            </div>
+          </div>
+
+          <div class="metric-card metric-due">
+            <div class="metric-icon">⏳</div>
+            <div class="metric-details">
+              <p data-i18n="dash.today_due">இன்றைய பாக்கி (Today Due)</p>
+              <div class="metric-value" id="stat-today-due">₹0.00</div>
+            </div>
+          </div>
+
+          <div class="metric-card metric-month">
+            <div class="metric-icon">📈</div>
+            <div class="metric-details">
+              <p data-i18n="dash.monthly_chart">மாத மொத்த விற்பனை (Month Sales)</p>
+              <div class="metric-value" id="stat-month-sales">₹0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="quick-actions-bar">
+          <button class="btn-quick primary" id="quick-btn-new-bill">
+            <span>🧾</span>
+            <span data-i18n="dash.new_bill_btn">⚡ புதிய பில் (New Bill F2)</span>
+          </button>
+          <button class="btn-quick" id="quick-btn-new-purchase">
+            <span>📥</span>
+            <span data-i18n="dash.new_purchase_btn">📦 புதிய கொள்முதல் (New Purchase)</span>
+          </button>
+          <button class="btn-quick" id="quick-btn-agri-stmt">
+            <span>📋</span>
+            <span data-i18n="dash.agri_stmt_btn">🏛️ அரசு அறிக்கை (Agri Statement)</span>
+          </button>
+        </div>
+
+        <!-- Dashboard Columns: Sales Chart & Low Stock Alerts -->
+        <div class="dashboard-grid">
+          
+          <!-- Month Sales Chart -->
+          <div class="card">
+            <div class="card-title">
+              <span>📊 இந்த மாத விற்பனை நிலவரம் (Month Sales Trend)</span>
+              <span style="font-size: 11px; color: var(--text-muted);" id="chart-month-name">நடப்பு மாதம்</span>
+            </div>
+            <div class="chart-container" id="sales-chart-container">
+              <!-- Rendered dynamically by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- Low Stock Alert Box -->
+          <div class="card">
+            <div class="card-title">
+              <span>⚠️ குறைந்த இருப்பு எச்சரிக்கை (Low Stock)</span>
+              <span class="badge badge-danger" id="low-stock-count-badge">0 பொருட்கள்</span>
+            </div>
+            <div class="table-wrapper" style="max-height: 240px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>மருந்து / பொருள்</th>
+                    <th>அளவு</th>
+                    <th>மீதி இருப்பு</th>
+                  </tr>
+                </thead>
+                <tbody id="low-stock-tbody">
+                  <tr>
+                    <td colspan="3" style="text-align: center; color: var(--text-dim); padding: 20px;">
+                      குறைந்த இருப்பு எதுவும் இல்லை (All stocks adequate)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Top 5 Selling Pesticides This Month -->
+        <div class="card">
+          <div class="card-title">
+            <span>🌾 இந்த மாதம் அதிகம் விற்பனையான பூச்சிமருந்துகள் (Top 5 Selling Pesticides)</span>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>வரிசை எண்</th>
+                  <th>பொருளின் பெயர் (Product Name)</th>
+                  <th>அளவு (Size)</th>
+                  <th>விற்பனை அளவு (Qty Sold)</th>
+                  <th>விற்பனை தொகை (Total Value)</th>
+                </tr>
+              </thead>
+              <tbody id="top-pesticides-tbody">
+                <tr>
+                  <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">
+                    தகவல்கள் பதிவு செய்யப்படவில்லை (No sales records yet)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 2: SETTINGS                                                 -->
+      <!-- ================================================================ -->
+      <section class="view-container" id="view-settings">
+        <div class="settings-grid">
+          
+          <!-- Column 1: Shop Profile & Invoicing -->
+          <div class="settings-section">
+            <div class="card">
+              <div class="card-title" data-i18n="set.shop_details">🏪 கடை விவரங்கள் (Shop Details)</div>
+              
+              <form id="form-shop-settings">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="set.shop_name_label">கடையின் பெயர் (Shop Name - Tamil & English)</label>
+                  <input type="text" class="form-control" id="setting-shop-name" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="set.tagline_label">விளம்பர வாசகம் (Tagline)</label>
+                  <input type="text" class="form-control" id="setting-tagline">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="set.address_label">முகவரி (Address)</label>
+                  <textarea class="form-control" id="setting-address" rows="2"></textarea>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="set.gstin_label">GSTIN எண்</label>
+                    <input type="text" class="form-control" id="setting-gstin" maxlength="15">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="set.phone_label">தொலைபேசி (Phone)</label>
+                    <input type="text" class="form-control" id="setting-phone" maxlength="15">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="set.prefix_label">பில் முன்னொட்டு (Bill Prefix)</label>
+                    <input type="text" class="form-control" id="setting-bill-prefix" placeholder="SK">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="set.fy_label">நிதியாண்டு (Financial Year)</label>
+                    <input type="text" class="form-control" id="setting-financial-year" placeholder="2026-27">
+                  </div>
+                </div>
+
+                <!-- Printer Selection -->
+                <div class="form-group">
+                  <label class="form-label" data-i18n="set.printer_label">இயல்புநிலை பிரிண்டர் (Default Print Size)</label>
+                  <div class="printer-toggle-group">
+                    <div class="printer-option selected" id="opt-printer-a4" data-type="A4">
+                      <span style="font-size: 20px;">📄</span>
+                      <span data-i18n="set.a4_print">A4 தாள் பிரிண்ட் (Standard GST)</span>
+                    </div>
+                    <div class="printer-option" id="opt-printer-thermal" data-type="thermal">
+                      <span style="font-size: 20px;">🧾</span>
+                      <span data-i18n="set.thermal_print">80mm தெர்மல் பில் (Thermal POS)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btn-save-settings" style="width: 100%; margin-top: 10px;" data-i18n="set.save_btn">
+                  💾 விவரங்களை சேமிக்கவும் (Save Shop Details)
+                </button>
+              </form>
+            </div>
+
+            <!-- Logo Upload -->
+            <div class="card">
+              <div class="card-title" data-i18n="set.logo_title">🖼️ பில் லோகோ (Invoice Logo)</div>
+              <div class="logo-preview-box" id="logo-preview-box">
+                <img id="logo-img-preview" class="logo-preview-img" style="display: none;" alt="Shop Logo">
+                <span id="logo-placeholder-text">லோகோ எதுவும் பதிவேற்றப்படவில்லை</span>
+              </div>
+              <button class="btn btn-secondary" id="btn-select-logo" style="width: 100%; margin-top: 12px;" data-i18n="set.select_logo">
+                📁 கணினியிலிருந்து லோகோ தேர்ந்தெடுக்கவும் (Select Logo)
+              </button>
+            </div>
+          </div>
+
+          <!-- Column 2: Security & Database Maintenance -->
+          <div class="settings-section">
+
+            <!-- Language / i18n Selector -->
+            <div class="card">
+              <div class="card-title" data-i18n="set.lang_title">🌐 மொழி அமைப்புகள் (Language Settings)</div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                மென்பொருளின் மொழியை தேர்ந்தெடுக்கவும் (Select display language):
+              </p>
+              <div class="lang-toggle-group">
+                <div class="lang-option selected" id="opt-lang-ta-en" data-lang="ta_en">
+                  <span style="font-size: 20px;">🌐</span>
+                  <div style="text-align: left;">
+                    <div style="font-weight: 600;">தமிழ் + English</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">இருமொழி (Bilingual - Default)</div>
+                  </div>
+                </div>
+                <div class="lang-option" id="opt-lang-ta" data-lang="ta">
+                  <span style="font-size: 20px;">🇮🇳</span>
+                  <div style="text-align: left;">
+                    <div style="font-weight: 600;">தமிழ் மட்டும்</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Tamil Only</div>
+                  </div>
+                </div>
+                <div class="lang-option" id="opt-lang-en" data-lang="en">
+                  <span style="font-size: 20px;">🇬🇧</span>
+                  <div style="text-align: left;">
+                    <div style="font-weight: 600;">English Only</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">ஆங்கிலம் மட்டும்</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Security / PIN Management -->
+            <div class="card">
+              <div class="card-title" data-i18n="set.pin_title">🔐 கடவுச்சொல் மாற்றம் (Change PIN)</div>
+              <form id="form-change-pin">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="set.cur_pin">தற்போதைய PIN (Current PIN)</label>
+                  <input type="password" class="form-control" id="pin-current" maxlength="8" required>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="set.new_pin">புதிய PIN (New PIN)</label>
+                    <input type="password" class="form-control" id="pin-new" maxlength="8" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" data-i18n="set.confirm_pin">உறுதிப்படுத்தவும் (Confirm New PIN)</label>
+                    <input type="password" class="form-control" id="pin-confirm" maxlength="8" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-warning" style="width: 100%;" data-i18n="set.update_pin_btn">
+                  🔑 PIN மாற்றவும் (Update Security PIN)
+                </button>
+              </form>
+            </div>
+
+            <!-- Database Backup and Restore -->
+            <div class="card">
+              <div class="card-title" data-i18n="set.backup_title">💾 தரவுத்தள மேலாண்மை (Backup & Restore)</div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+                உங்கள் தரவுகள் 100% உங்கள் கணினியிலேயே பாதுகாப்பாக சேமிக்கப்படுகின்றன. தினமும் காப்புப்பிரதி எடுத்து பாதுகாக்கவும்.
+              </p>
+              
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-secondary" id="btn-backup-db" data-i18n="set.backup_btn">
+                  📥 காப்புப்பிரதி எடுக்கவும் (Backup Database .db)
+                </button>
+
+                <button class="btn btn-outline" id="btn-restore-db" style="border-color: var(--danger); color: #fca5a5;" data-i18n="set.restore_btn">
+                  ⚠️ முந்தைய காப்புப்பிரதியை மீட்டெடுக்க (Restore Database)
+                </button>
+              </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="card">
+              <div class="card-title" data-i18n="set.about_title">ℹ️ மென்பொருள் தகவல் (About Software)</div>
+              <div style="font-size: 13px; line-height: 1.8; color: var(--text-muted);">
+                <div>மென்பொருள்: <strong>Nexus Billing Software (Desktop v1.0.0)</strong></div>
+                <div>வகை: <strong>விதை, பூச்சிமருந்து, உரம் விற்பனை அமைப்பு</strong></div>
+                <div>தொழில்நுட்பம்: <strong>Electron, Node.js, SQLite (WAL Offline Engine)</strong></div>
+                <div>டெவலப்பர் (Developer): <strong style="color: var(--primary);">SNK TECH Team</strong></div>
+                <div>பதிப்புரிமை (Copyright): <strong>© 2026 SNK TECH</strong></div>
+                <div id="app-db-path" style="font-size: 11px; font-family: var(--font-mono); color: var(--text-dim); margin-top: 6px; word-break: break-all;">
+                  DB: ...
+                </div>
+              </div>
+              <div style="margin-top: 16px;">
+                <button class="btn btn-secondary" id="btn-open-about-modal" style="width: 100%;" data-i18n="set.about_btn">
+                  ℹ️ மென்பொருள் பற்றி (About Software)
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 3: PRODUCTS & STOCK MANAGEMENT                              -->
+      <!-- ================================================================ -->
+      <section class="view-container" id="view-products">
+        <div class="card" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            
+            <!-- Filters -->
+            <div style="display: flex; gap: 12px; flex: 1; min-width: 300px; align-items: center;">
+              <input type="text" class="form-control" id="product-search-input" placeholder="🔍 மருந்து / விதை பெயர் அல்லது HSN தேடவும்..." style="max-width: 320px;" data-i18n-placeholder="prod.search_ph">
+              
+              <select class="form-control" id="product-category-filter" style="max-width: 200px;">
+                <option value="" data-i18n="prod.filter_all">அனைத்து பிரிவுகளும் (All Categories)</option>
+                <option value="pesticide" data-i18n="prod.filter_pesticide">பூச்சிமருந்து (Pesticides)</option>
+                <option value="seed" data-i18n="prod.filter_seed">விதை (Seeds)</option>
+                <option value="fertilizer" data-i18n="prod.filter_fertilizer">உரம் (Fertilizers)</option>
+              </select>
+
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted); font-size: 13px; white-space: nowrap;">
+                <input type="checkbox" id="product-low-stock-filter">
+                <span data-i18n="prod.filter_low_stock">குறைந்த இருப்பு மட்டும் (Low Stock)</span>
+              </label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-outline" id="btn-open-csv-modal">
+                <span>📥</span>
+                <span data-i18n="prod.import_csv_btn">CSV இறக்குமதி (Bulk Import)</span>
+              </button>
+              <button class="btn btn-primary" id="btn-open-add-product-modal">
+                <span>➕</span>
+                <span data-i18n="prod.add_btn">புதிய பொருள் சேர்க்க (Add Product)</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="card">
+          <div class="card-title">
+            <span>📦 இருப்பு பட்டியல் (Products Inventory)</span>
+            <span class="badge badge-info" id="products-count-badge">0 பொருட்கள்</span>
+          </div>
+          <div class="table-wrapper" style="max-height: calc(100vh - 280px);">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">வ.எண்</th>
+                  <th>பொருளின் பெயர் (Product Name)</th>
+                  <th>அளவு</th>
+                  <th>பிரிவு</th>
+                  <th>HSN</th>
+                  <th>GST %</th>
+                  <th>கொள்முதல் (₹)</th>
+                  <th>விற்பனை (₹)</th>
+                  <th>நடப்பு இருப்பு</th>
+                  <th>நிலை</th>
+                  <th style="text-align: center;">செயல்</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+                <tr>
+                  <td colspan="11" style="text-align: center; color: var(--text-dim); padding: 30px;">
+                    பொருட்கள் எதுவும் சேர்க்கப்படவில்லை (No products added yet)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 4: CUSTOMERS & LEDGER                                       -->
+      <!-- ================================================================ -->
+      <section class="view-container" id="view-customers">
+        <div class="card" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            
+            <div style="display: flex; gap: 12px; flex: 1; max-width: 450px;">
+              <input type="text" class="form-control" id="customer-search-input" placeholder="🔍 விவசாயி / வாடிக்கையாளர் பெயர், போன், கிராமம் தேடவும்..." data-i18n-placeholder="cust.search_ph">
+            </div>
+
+            <button class="btn btn-primary" id="btn-open-add-customer-modal">
+              <span>➕</span>
+              <span data-i18n="cust.add_btn">புதிய வாடிக்கையாளர் சேர்க்க (Add Customer)</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="card">
+          <div class="card-title">
+            <span>👥 வாடிக்கையாளர் கணக்கு பட்டியல் (Customer Accounts)</span>
+            <span class="badge badge-info" id="customers-count-badge">0 நபர்கள்</span>
+          </div>
+          <div class="table-wrapper" style="max-height: calc(100vh - 280px);">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">எண்</th>
+                  <th>வாடிக்கையாளர் பெயர் (Name)</th>
+                  <th>தொலைபேசி (Phone)</th>
+                  <th>கிராமம் (Village)</th>
+                  <th>முகவரி (Address)</th>
+                  <th>GSTIN</th>
+                  <th>துவக்க பாக்கி</th>
+                  <th>நடப்பு பாக்கி (Due)</th>
+                  <th style="text-align: center;">நடவடிக்கைகள் (Actions)</th>
+                </tr>
+              </thead>
+              <tbody id="customers-tbody">
+                <tr>
+                  <td colspan="9" style="text-align: center; color: var(--text-dim); padding: 30px;">
+                    வாடிக்கையாளர் பட்டியல் காலியாக உள்ளது (No customers registered yet)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 5: NEW BILL (COUNTER POINT-OF-SALE)                         -->
+      <!-- ================================================================ -->
+      <section class="view-container" id="view-billing">
+        <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px; height: calc(100vh - 106px);">
+          
+          <!-- Left Column: Products Input & Line Items -->
+          <div style="display: flex; flex-direction: column; gap: 14px; overflow: hidden;">
+            
+            <!-- Invoice Meta Header Bar -->
+            <div class="card" style="padding: 14px 18px;">
+              <div style="display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 13px; color: var(--text-muted);">பில் எண்:</span>
+                  <span class="badge badge-info" id="bill-no-badge" style="font-size: 14px; font-family: var(--font-mono); font-weight: 700; padding: 4px 10px;">
+                    SK/2026-27/0001
+                  </span>
+                  
+                  <span style="font-size: 13px; color: var(--text-muted); margin-left: 10px;">தேதி:</span>
+                  <input type="date" id="bill-date" class="form-control" style="width: 140px; padding: 5px 8px;">
+                </div>
+
+                <!-- Customer Picker -->
+                <div style="display: flex; align-items: center; gap: 10px; position: relative;">
+                  <span style="font-size: 13px; color: var(--text-muted);">வாடிக்கையாளர்:</span>
+                  <div style="position: relative; width: 280px;">
+                    <input type="text" id="bill-customer-search" class="form-control" placeholder="விவசாயி பெயர் / போன்..." autocomplete="off" data-i18n-placeholder="bill.cust_search_ph">
+                    <input type="hidden" id="bill-customer-id" value="1">
+                    
+                    <!-- Autocomplete dropdown -->
+                    <div id="bill-customer-dropdown" class="card" style="display: none; position: absolute; top: 40px; left: 0; width: 100%; max-height: 200px; overflow-y: auto; z-index: 1000; padding: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.6);">
+                    </div>
+                  </div>
+
+                  <span class="badge badge-warning" id="bill-cust-due-badge" style="display: none; font-size: 11px;">
+                    பாக்கி: ₹0.00
+                  </span>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Product Fast-Entry Bar (Focused via F4) -->
+            <div class="card" style="padding: 14px 18px; border-color: var(--primary);">
+              <div style="font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; justify-content: space-between;">
+                <span>⚡ பொருள் உள்ளீடு (Fast Line Item Entry) - [F4 தேட]</span>
+                <span id="selected-prod-stock-badge" style="display: none;" class="badge badge-success">இருப்பு: 0</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr 80px 100px; gap: 10px; align-items: end;">
+                
+                <!-- Product Search Autocomplete -->
+                <div style="position: relative;">
+                  <label class="form-label" style="font-size: 11px;">மருந்து / விதை / உரம் (Product) [F4]</label>
+                  <input type="text" id="bill-product-search" class="form-control" placeholder="பெயர் அல்லது HSN உள்ளிடவும்..." autocomplete="off" data-i18n-placeholder="bill.prod_search_ph">
+                  <input type="hidden" id="bill-selected-prod-id">
+                  
+                  <div id="bill-product-dropdown" class="card" style="display: none; position: absolute; top: 62px; left: 0; width: 120%; max-height: 240px; overflow-y: auto; z-index: 2000; padding: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
+                  </div>
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                  <label class="form-label" style="font-size: 11px;">அளவு (Qty)</label>
+                  <input type="number" id="bill-item-qty" class="form-control" min="0.01" step="any" value="1">
+                </div>
+
+                <!-- Rate (Editable) -->
+                <div>
+                  <label class="form-label" style="font-size: 11px;">விலை (Rate ₹)</label>
+                  <input type="number" id="bill-item-rate" class="form-control" step="0.01" value="0.00">
+                </div>
+
+                <!-- Discount -->
+                <div>
+                  <label class="form-label" style="font-size: 11px;">தள்ளுபடி (Disc ₹)</label>
+                  <input type="number" id="bill-item-disc" class="form-control" step="0.01" value="0.00">
+                </div>
+
+                <!-- GST % -->
+                <div>
+                  <label class="form-label" style="font-size: 11px;">GST %</label>
+                  <input type="text" id="bill-item-gst" class="form-control" readonly value="18%" style="background-color: rgba(255,255,255,0.05); text-align: center;">
+                </div>
+
+                <!-- Add Button -->
+                <div>
+                  <button type="button" class="btn btn-primary" id="btn-add-bill-item" style="width: 100%; height: 38px;">
+                    ➕ சேர்
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Bill Line Items Table -->
+            <div class="card" style="flex: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+              <div class="table-wrapper" style="flex: 1; overflow-y: auto; border: none; border-radius: 0;">
+                <table class="data-table" id="bill-table" style="font-size: 12px;">
+                  <thead>
+                    <tr>
+                      <th style="width: 35px;">எண்</th>
+                      <th>பொருள் (Description)</th>
+                      <th>அளவு</th>
+                      <th>HSN</th>
+                      <th style="text-align: right; width: 65px;">அளவு</th>
+                      <th style="text-align: right; width: 85px;">விலை (₹)</th>
+                      <th style="text-align: right; width: 75px;">தள்ளுபடி</th>
+                      <th style="text-align: right; width: 90px;">வரி மதிப்பு</th>
+                      <th style="text-align: right; width: 70px;">CGST</th>
+                      <th style="text-align: right; width: 70px;">SGST</th>
+                      <th style="text-align: right; width: 95px;">மொத்தம் (₹)</th>
+                      <th style="width: 40px; text-align: center;">நீக்கு</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bill-items-tbody">
+                    <tr id="bill-empty-row">
+                      <td colspan="12" style="text-align: center; color: var(--text-dim); padding: 40px;">
+                        பில்லில் பொருட்கள் எதுவும் சேர்க்கப்படவில்லை.<br>
+                        <span style="font-size: 11px;">[F4] அழுத்தி மருந்துகள் / விதைகளை எளிதாக சேர்க்கலாம்.</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Live Totals & Payment Settlement Panel -->
+          <div style="display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+            
+            <!-- Grand Total Big Display -->
+            <div class="card" style="background: linear-gradient(135deg, #064e3b, #0f172a); border-color: var(--primary); padding: 18px; text-align: center;">
+              <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
+                நிகர மொத்த தொகை (Grand Total)
+              </div>
+              <div id="bill-grand-total" style="font-size: 34px; font-weight: 800; color: #34d399; font-family: var(--font-mono); margin: 6px 0;">
+                ₹0.00
+              </div>
+              <div id="bill-total-words" style="font-size: 11px; color: #cbd5e1; font-style: italic; min-height: 28px;">
+                பூஜ்ஜியம் ரூபாய் மட்டும்
+              </div>
+            </div>
+
+            <!-- Tax & Calculation Breakdown -->
+            <div class="card" style="padding: 14px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px;">
+                வரி கணக்கீடு (Tax Breakdown)
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted);">வரிக்குரிய மதிப்பு (Taxable):</span>
+                  <span id="bill-subtotal" style="font-family: var(--font-mono);">₹0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted);">CGST மத்திய வரி:</span>
+                  <span id="bill-cgst" style="font-family: var(--font-mono);">₹0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--text-muted);">SGST மாநில வரி:</span>
+                  <span id="bill-sgst" style="font-family: var(--font-mono);">₹0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 4px;">
+                  <span style="color: var(--text-muted);">சில்லறை மாற்றம் (Round-off):</span>
+                  <span id="bill-round-off" style="font-family: var(--font-mono);">₹0.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Mode & Paid / Due -->
+            <div class="card" style="padding: 14px;">
+              <div class="form-group" style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 12px;">பணம் செலுத்தும் முறை (Payment Mode)</label>
+                <select id="bill-payment-mode" class="form-control">
+                  <option value="cash">பணம் (Cash)</option>
+                  <option value="upi">UPI / GPay / QR</option>
+                  <option value="card">அட்டை (Card)</option>
+                  <option value="credit">கடன் (Credit - பாக்கி)</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 12px;">செலுத்திய தொகை (Paid ₹)</label>
+                <input type="number" step="0.01" id="bill-paid-amount" class="form-control" style="font-weight: 700; font-size: 15px; font-family: var(--font-mono);" value="0.00">
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 10px;">
+                <span style="font-size: 12px; color: var(--text-muted);">பாக்கி தொகை (Due):</span>
+                <span id="bill-due-amount" style="font-size: 15px; font-weight: 700; color: var(--danger); font-family: var(--font-mono);">₹0.00</span>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 11px;">பில் குறிப்பு (Notes)</label>
+                <input type="text" id="bill-notes" class="form-control" placeholder="குறிப்புகள்...">
+              </div>
+            </div>
+
+            <!-- Printer Toggle -->
+            <div style="display: flex; gap: 8px;">
+              <div class="printer-option selected" id="bill-print-opt-a4" data-type="A4" style="padding: 6px; font-size: 11px;">
+                📄 A4 பில்
+              </div>
+              <div class="printer-option" id="bill-print-opt-thermal" data-type="thermal" style="padding: 6px; font-size: 11px;">
+                🧾 80mm தெர்மல்
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn btn-primary" id="btn-save-print-bill" style="height: 46px; font-size: 15px;">
+                <span>🖨️</span>
+                <span data-i18n="bill.save_print_btn">சேமித்து அச்சிடுக [F9]</span>
+              </button>
+              
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" id="btn-save-bill" style="flex: 1;" data-i18n="bill.save_btn">
+                  💾 சேமிக்க மட்டும்
+                </button>
+                <button class="btn btn-outline" id="btn-reset-bill" style="flex: 1;" data-i18n="bill.clear_btn">
+                  🔄 புதிய பில்
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 6: PURCHASES (STOCK INWARD)                                 -->
+      <!-- ================================================================ -->
+      <section class="view-container" id="view-purchases">
+        <div class="card" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            
+            <div style="display: flex; gap: 12px; flex: 1; align-items: center; flex-wrap: wrap;">
+              <input type="text" class="form-control" id="purchase-search-input" placeholder="🔍 சப்ளையர் பெயர் அல்லது பில் எண்..." style="max-width: 280px;" data-i18n-placeholder="pur.search_ph">
+              
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 12px; color: var(--text-muted);">முதல்:</span>
+                <input type="date" class="form-control" id="purchase-filter-start" style="width: 140px; padding: 6px 8px;">
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 12px; color: var(--text-muted);">வரை:</span>
+                <input type="date" class="form-control" id="purchase-filter-end" style="width: 140px; padding: 6px 8px;">
+              </div>
+
+              <button class="btn btn-outline" id="btn-filter-purchases" style="padding: 7px 14px;">
+                🔍 வடிகட்டு
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-outline" id="btn-open-suppliers-modal">
+                <span>🏢</span>
+                <span data-i18n="pur.add_supplier_btn">சப்ளையர்கள் (Suppliers)</span>
+              </button>
+              <button class="btn btn-primary" id="btn-open-purchase-modal">
+                <span>➕</span>
+                <span data-i18n="pur.new_inward_btn">புதிய கொள்முதல் பதிவு (New Inward)</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Purchases Table -->
+        <div class="card">
+          <div class="card-title">
+            <span>📥 சரக்கு கொள்முதல் வரலாறு (Stock Inward History)</span>
+            <span class="badge badge-info" id="purchases-count-badge">0 பதிவுகள்</span>
+          </div>
+          <div class="table-wrapper" style="max-height: calc(100vh - 280px);">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">எண்</th>
+                  <th>தேதி</th>
+                  <th>சப்ளையர் பில் எண்</th>
+                  <th>சப்ளையர் பெயர் (Company / Distributor)</th>
+                  <th>தொலைபேசி</th>
+                  <th style="text-align: right;">மொத்த கொள்முதல் (₹)</th>
+                  <th style="text-align: right;">செலுத்தியது (₹)</th>
+                  <th style="text-align: right;">பாக்கி (₹)</th>
+                  <th>குறிப்பு</th>
+                  <th style="text-align: center;">செயல்</th>
+                </tr>
+              </thead>
+              <tbody id="purchases-tbody">
+                <tr>
+                  <td colspan="10" style="text-align: center; color: var(--text-dim); padding: 30px;">
+                    கொள்முதல் பதிவுகள் எதுவும் இல்லை (No purchases recorded yet)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VIEW 7: REPORTS & AGRI STATEMENTS                                -->
+      <!-- ================================================================ -->
+      <section class="view-container" id="view-reports">
+        
+        <!-- Reports Sub-Navigation Tabs -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; flex-wrap: wrap;">
+          <button class="btn btn-primary rpt-tab-btn" data-tab="agri" id="tab-btn-agri">
+            <span>📋</span>
+            <span data-i18n="rep.tab_agri">வேளாண் துறை அறிக்கை (Agri Statements)</span>
+          </button>
+          <button class="btn btn-outline rpt-tab-btn" data-tab="daybook" id="tab-btn-daybook">
+            <span>📅</span>
+            <span data-i18n="rep.tab_daybook">விற்பனை நாளேடு (Sales Day Book)</span>
+          </button>
+          <button class="btn btn-outline rpt-tab-btn" data-tab="gst" id="tab-btn-gst">
+            <span>📊</span>
+            <span data-i18n="rep.tab_gstr1">GST சுருக்கம் (GSTR-1 Summary)</span>
+          </button>
+          <button class="btn btn-outline rpt-tab-btn" data-tab="stock" id="tab-btn-stock">
+            <span>📦</span>
+            <span data-i18n="rep.tab_stock">சரக்கு இருப்பு (Stock Report)</span>
+          </button>
+          <button class="btn btn-outline rpt-tab-btn" data-tab="outstanding" id="tab-btn-outstanding">
+            <span>👥</span>
+            <span data-i18n="rep.tab_outstanding">வாடிக்கையாளர் பாக்கி (Outstanding)</span>
+          </button>
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- SUB-TAB 1: AGRI DEPARTMENT STATEMENTS (CRITICAL REQUIREMENT) -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="rpt-tab-pane active" id="pane-agri">
+          
+          <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--primary);">
+            <div class="card-title">
+              <span>🌾 தமிழ்நாடு வேளாண்மைத்துறைக்கான மாதாந்திர இருப்பு & விற்பனை அறிக்கை</span>
+              <span class="badge badge-success">அரசு நிர்ணயித்த படிவம்</span>
+            </div>
+            
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              விதை, உரம், பூச்சிமருந்து உரிம ஆய்வின் போது (Inspection) சமர்ப்பிக்க வேண்டிய அதிகாரப்பூர்வ அறிக்கை.
+            </p>
+
+            <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+              
+              <!-- Category Selector -->
+              <div style="min-width: 220px;">
+                <label class="form-label">பிரிவு (Category) *</label>
+                <select id="agri-category-select" class="form-control" style="font-weight: 600;">
+                  <option value="pesticide">🌿 பூச்சிமருந்து அறிக்கை (Pesticides)</option>
+                  <option value="seed">🌾 விதை அறிக்கை (Seeds)</option>
+                  <option value="fertilizer">🧪 உரம் அறிக்கை (Fertilizers)</option>
+                </select>
+              </div>
+
+              <!-- Date Range -->
+              <div>
+                <label class="form-label">ஆரம்ப தேதி (Start Date) *</label>
+                <input type="date" id="agri-start-date" class="form-control" style="width: 150px;">
+              </div>
+
+              <div>
+                <label class="form-label">முடிவு தேதி (End Date) *</label>
+                <input type="date" id="agri-end-date" class="form-control" style="width: 150px;">
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn btn-secondary" id="btn-view-agri-stmt">
+                  <span>👁️</span>
+                  <span>திரையில் பார்க்க (View)</span>
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-export-agri-pdf">
+                  <span>📥</span>
+                  <span>PDF ஆக சேமிக்க (Export PDF)</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- 3 Category Quick Shortcuts -->
+            <div style="display: flex; gap: 10px; margin-top: 14px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <span style="font-size: 12px; color: var(--text-dim); align-self: center;">விரைவு பொத்தான்கள்:</span>
+              <button class="btn btn-outline btn-agri-quick" data-cat="pesticide" style="font-size: 12px; padding: 4px 10px;">
+                🌿 பூச்சிமருந்து அறிக்கை
+              </button>
+              <button class="btn btn-outline btn-agri-quick" data-cat="seed" style="font-size: 12px; padding: 4px 10px;">
+                🌾 விதை அறிக்கை
+              </button>
+              <button class="btn btn-outline btn-agri-quick" data-cat="fertilizer" style="font-size: 12px; padding: 4px 10px;">
+                🧪 உரம் அறிக்கை
+              </button>
+            </div>
+          </div>
+
+          <!-- Live On-Screen Preview matching exact Tamil Layout -->
+          <div class="card" id="agri-preview-card">
+            <div style="background: #fff; color: #000; padding: 24px; border-radius: var(--radius-sm); font-family: 'Noto Sans Tamil', 'Nirmala UI', Arial, sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+              
+              <!-- Official Header -->
+              <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 12px;">
+                <div style="font-size: 20px; font-weight: bold;" id="agri-prev-shop">ஸ்ரீ குமரன் ஏஜென்சிஸ்</div>
+                <div style="font-size: 13px; font-weight: 600; margin-top: 2px;" id="agri-prev-tagline">விதை, பூச்சிமருந்து, உரம் வியாபாரம்</div>
+                <div style="font-size: 12px;" id="agri-prev-address">69, கடைவீதி, முசிறி (TK), திருச்சி (Dt)-621211.</div>
+                <div style="font-size: 15px; font-weight: bold; margin-top: 8px; text-decoration: underline;" id="agri-prev-title">
+                  பூச்சிமருந்து அறிக்கை (Pesticides Statement)
+                </div>
+              </div>
+
+              <!-- Date Period -->
+              <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 10px;">
+                <div>ஆரம்ப தேதி: <span id="agri-prev-start">-</span></div>
+                <div>முடிவு தேதி: <span id="agri-prev-end">-</span></div>
+              </div>
+
+              <!-- Agri Department Table matching exact 8 columns -->
+              <div class="table-wrapper" style="border: 1.5px solid #000;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #000;">
+                  <thead>
+                    <tr style="background-color: #f1f5f9; border-bottom: 1.5px solid #000;">
+                      <th style="border-right: 1px solid #000; padding: 8px 6px; text-align: center; width: 45px;">வ.எண்</th>
+                      <th style="border-right: 1px solid #000; padding: 8px 6px; text-align: center; width: 65px;">அளவு</th>
+                      <th style="border-right: 1px solid #000; padding: 8px 8px; text-align: left;" id="agri-col-prod-name">மருந்தின் பெயர்</th>
+                      <th style="border-right: 1px solid #000; padding: 8px 6px; text-align: right; width: 85px;">ஆரம்ப இருப்பு</th>
+                      <th style="border-right: 1px solid #000; padding: 8px 6px; text-align: right; width: 75px;">வரவு</th>
+                      <th style="border-right: 1px solid #000; padding: 8px 6px; text-align: right; width: 85px;">மொத்தம்</th>
+                      <th style="border-right: 1px solid #000; padding: 8px 6px; text-align: right; width: 75px;">விற்பனை</th>
+                      <th style="padding: 8px 6px; text-align: right; width: 85px;">மீதி இருப்பு</th>
+                    </tr>
+                  </thead>
+                  <tbody id="agri-preview-tbody">
+                    <tr>
+                      <td colspan="8" style="text-align: center; color: #666; padding: 30px;">
+                        தேதியை தேர்வு செய்து "திரையில் பார்க்க" பொத்தானை அழுத்தவும்
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Signature Footer -->
+              <div style="display: flex; justify-content: flex-end; margin-top: 40px; padding-right: 20px;">
+                <div style="text-align: center; width: 220px; border-top: 1px dashed #000; padding-top: 6px; font-weight: bold; font-size: 12px;">
+                  உரிமையாளர் கையொப்பம்<br>(Proprietor Signature)
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- SUB-TAB 2: SALES DAY BOOK                                     -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="rpt-tab-pane" id="pane-daybook" style="display: none;">
+          <div class="card" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap;">
+              <div>
+                <label class="form-label">ஆரம்ப தேதி</label>
+                <input type="date" id="daybook-start-date" class="form-control" style="width: 150px;">
+              </div>
+              <div>
+                <label class="form-label">முடிவு தேதி</label>
+                <input type="date" id="daybook-end-date" class="form-control" style="width: 150px;">
+              </div>
+              <button class="btn btn-primary" id="btn-load-daybook">
+                🔍 விற்பனை நாளேடு எடுக்க
+              </button>
+            </div>
+          </div>
+
+          <!-- Daybook Summary Cards -->
+          <div class="metrics-grid" style="margin-bottom: 20px;">
+            <div class="metric-card metric-sales">
+              <div class="metric-icon">💰</div>
+              <div class="metric-details">
+                <p>மொத்த விற்பனை (Sales)</p>
+                <div class="metric-value" id="db-stat-sales">₹0.00</div>
+              </div>
+            </div>
+            <div class="metric-card metric-collection">
+              <div class="metric-icon">📥</div>
+              <div class="metric-details">
+                <p>ரொக்க வசூல் (Cash/UPI)</p>
+                <div class="metric-value" id="db-stat-paid">₹0.00</div>
+              </div>
+            </div>
+            <div class="metric-card metric-due">
+              <div class="metric-icon">⏳</div>
+              <div class="metric-details">
+                <p>கடன் விற்பனை (Credit Due)</p>
+                <div class="metric-value" id="db-stat-due">₹0.00</div>
+              </div>
+            </div>
+            <div class="metric-card metric-month">
+              <div class="metric-icon">📑</div>
+              <div class="metric-details">
+                <p>பில்கள் எண்ணிக்கை</p>
+                <div class="metric-value" id="db-stat-bills">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daybook Bills Table -->
+          <div class="card">
+            <div class="card-title">விற்பனை விவர பட்டியல்</div>
+            <div class="table-wrapper" style="max-height: 400px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>தேதி</th>
+                    <th>பில் எண்</th>
+                    <th>வாடிக்கையாளர்</th>
+                    <th>முறை</th>
+                    <th style="text-align: right;">வரி மதிப்பு (₹)</th>
+                    <th style="text-align: right;">CGST</th>
+                    <th style="text-align: right;">SGST</th>
+                    <th style="text-align: right;">மொத்தம் (₹)</th>
+                    <th style="text-align: right;">செலுத்தியது (₹)</th>
+                    <th style="text-align: right;">பாக்கி (₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="daybook-tbody">
+                  <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-dim); padding: 30px;">
+                      பரிவர்த்தனைகள் எதுவும் இல்லை
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- SUB-TAB 3: GST SUMMARY (GSTR-1 SLAB)                          -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="rpt-tab-pane" id="pane-gst" style="display: none;">
+          <div class="card" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap;">
+              <div>
+                <label class="form-label">ஆரம்ப தேதி</label>
+                <input type="date" id="gst-start-date" class="form-control" style="width: 150px;">
+              </div>
+              <div>
+                <label class="form-label">முடிவு தேதி</label>
+                <input type="date" id="gst-end-date" class="form-control" style="width: 150px;">
+              </div>
+              <button class="btn btn-primary" id="btn-load-gst">
+                📊 GST சுருக்கம் எடுக்க
+              </button>
+            </div>
+          </div>
+
+          <!-- GST Rate-Wise Table -->
+          <div class="card">
+            <div class="card-title">GSTR-1 படிவத்திற்கான வரி விகித அட்டவணை (GST Rate Slab Breakdown)</div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>GST விகிதம்</th>
+                    <th style="text-align: right;">வரிக்குரிய மதிப்பு (Taxable ₹)</th>
+                    <th style="text-align: right;">மத்திய வரி (CGST ₹)</th>
+                    <th style="text-align: right;">மாநில வரி (SGST ₹)</th>
+                    <th style="text-align: right;">மொத்த வரி (Total Tax ₹)</th>
+                    <th style="text-align: right;">மொத்த விற்பனை (Gross ₹)</th>
+                    <th style="text-align: center;">பில்கள் எண்ணிக்கை</th>
+                  </tr>
+                </thead>
+                <tbody id="gst-tbody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-dim); padding: 30px;">
+                      தேதியை தேர்வு செய்து அறிக்கையை எடுக்கவும்
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- SUB-TAB 4: STOCK INVENTORY REPORT                             -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="rpt-tab-pane" id="pane-stock" style="display: none;">
+          <div class="card" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 14px; align-items: center; justify-content: space-between;">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <label class="form-label" style="margin-bottom: 0;">பிரிவு:</label>
+                <select id="stock-category-select" class="form-control" style="width: 220px;">
+                  <option value="">அனைத்து பொருட்களும் (All)</option>
+                  <option value="pesticide">பூச்சிமருந்து (Pesticides)</option>
+                  <option value="seed">விதை (Seeds)</option>
+                  <option value="fertilizer">உரம் (Fertilizers)</option>
+                </select>
+                <button class="btn btn-primary" id="btn-load-stock-report">
+                  புதுப்பிக்க (Refresh)
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 20px;">
+                <div style="text-align: right;">
+                  <div style="font-size: 11px; color: var(--text-muted);">மொத்த கொள்முதல் மதிப்பு (Cost Value)</div>
+                  <div id="stock-total-cost" style="font-size: 18px; font-weight: 700; color: var(--primary); font-family: var(--font-mono);">₹0.00</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 11px; color: var(--text-muted);">விற்பனை மதிப்பு (Retail Value)</div>
+                  <div id="stock-total-retail" style="font-size: 18px; font-weight: 700; color: #38bdf8; font-family: var(--font-mono);">₹0.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-wrapper" style="max-height: 440px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 35px;">எண்</th>
+                    <th>பொருள் பெயர்</th>
+                    <th>அளவு</th>
+                    <th>பிரிவு</th>
+                    <th style="text-align: right;">நடப்பு இருப்பு</th>
+                    <th style="text-align: right;">கொள்முதல் விலை</th>
+                    <th style="text-align: right;">விற்பனை விலை</th>
+                    <th style="text-align: right;">கொள்முதல் மதிப்பு (₹)</th>
+                    <th style="text-align: right;">விற்பனை மதிப்பு (₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="stock-rpt-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- SUB-TAB 5: CUSTOMER OUTSTANDING DUE REPORT                    -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="rpt-tab-pane" id="pane-outstanding" style="display: none;">
+          <div class="card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; font-size: 15px; color: #fff;">விவசாயிகள் / வாடிக்கையாளர் கடன் பாக்கி அறிக்கை</div>
+              <div style="font-size: 12px; color: var(--text-muted);">பாக்கி தொகை நிலுவையில் உள்ள வாடிக்கையாளர்கள் மட்டும்</div>
+            </div>
+            <div>
+              <span style="font-size: 12px; color: var(--text-muted); margin-right: 8px;">மொத்த கடன் பாக்கி:</span>
+              <span id="cust-total-outstanding" style="font-size: 24px; font-weight: 800; color: var(--danger); font-family: var(--font-mono);">₹0.00</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-wrapper" style="max-height: 440px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px;">எண்</th>
+                    <th>வாடிக்கையாளர் பெயர்</th>
+                    <th>தொலைபேசி</th>
+                    <th>கிராமம் (Village)</th>
+                    <th>முகவரி</th>
+                    <th>GSTIN</th>
+                    <th style="text-align: right;">நிலுவை பாக்கி தொகை (Due ₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="outstanding-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: ADD / EDIT PRODUCT                                            -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-product">
+    <div class="modal-box" style="width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-product-title">புதிய பொருள் சேர்க்க (Add Product)</h3>
+        <button class="modal-close" data-modal="modal-product">&times;</button>
+      </div>
+
+      <form id="form-product">
+        <input type="hidden" id="prod-id">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">பிரிவு (Category) *</label>
+            <select class="form-control" id="prod-category" required>
+              <option value="pesticide">பூச்சிமருந்து (Pesticide - GST 18%)</option>
+              <option value="seed">விதை (Seed - GST 0% Exempt)</option>
+              <option value="fertilizer">உரம் (Fertilizer - GST 5%)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">GST விகிதம் (GST Rate %) *</label>
+            <input type="number" step="0.01" class="form-control" id="prod-gst-rate" required value="18">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">பொருளின் பெயர் (English Name) *</label>
+            <input type="text" class="form-control" id="prod-name" placeholder="e.g. Coragen, Monocrotophos" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">தமிழ் பெயர் (Tamil Name)</label>
+            <input type="text" class="form-control" id="prod-tamil-name" placeholder="e.g. கோராஜன்">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">அளவு (Size / Pack) *</label>
+            <input type="text" class="form-control" id="prod-size" placeholder="e.g. 150ml, 500ml, 1L, 1kg, 50kg" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">அளவீட்டு அலகு (Unit) *</label>
+            <select class="form-control" id="prod-unit">
+              <option value="NOS">NOS (எண்ணிக்கை)</option>
+              <option value="BTL">BTL (பாட்டில்)</option>
+              <option value="PKT">PKT (பாக்கெட்)</option>
+              <option value="BAG">BAG (மூட்டை)</option>
+              <option value="KG">KG (கிலோ)</option>
+              <option value="LTR">LTR (லிட்டர்)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">HSN குறியீடு (HSN Code)</label>
+            <input type="text" class="form-control" id="prod-hsn" placeholder="e.g. 3808">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">கொள்முதல் விலை (Purchase Price ₹)</label>
+            <input type="number" step="0.01" class="form-control" id="prod-purchase-price" value="0.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">விற்பனை விலை (Selling Price ₹) *</label>
+            <input type="number" step="0.01" class="form-control" id="prod-selling-price" required value="0.00">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" id="group-opening-stock">
+            <label class="form-label">ஆரம்ப இருப்பு (Opening Stock)</label>
+            <input type="number" step="0.01" class="form-control" id="prod-opening-stock" value="0">
+            <small style="font-size: 11px; color: var(--text-dim);">தானாக சரக்கு ஏட்டில் 'opening' என பதியப்படும்.</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">மறுஆர்டர் எச்சரிக்கை அளவு (Reorder Level)</label>
+            <input type="number" step="0.01" class="form-control" id="prod-reorder-level" value="5">
+          </div>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+          <input type="checkbox" id="prod-active" checked>
+          <label for="prod-active" style="cursor: pointer; color: var(--text-main);">விற்பனைக்கு இயக்கத்தில் உள்ளது (Active)</label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline modal-close" data-modal="modal-product">ரத்து (Cancel)</button>
+          <button type="submit" class="btn btn-primary">💾 சேமிக்கவும் (Save Product)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: BULK CSV IMPORT                                               -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-csv-import">
+    <div class="modal-box" style="width: 750px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📥 மொத்த பொருட்கள் CSV இறக்குமதி (Bulk CSV Import)</h3>
+        <button class="modal-close" data-modal="modal-csv-import">&times;</button>
+      </div>
+
+      <div style="margin-bottom: 16px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+        <div>CSV கோப்பில் இருக்க வேண்டிய தலைப்புகள் (Required CSV Headers):</div>
+        <code style="display: block; background: var(--bg-input); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 11px; color: var(--primary); margin: 8px 0; word-break: break-all;">
+          name,tamil_name,size,category,hsn_code,gst_rate,purchase_price,selling_price,opening_stock,unit,reorder_level
+        </code>
+        <div style="font-size: 11px; color: var(--text-dim);">
+          * category மதிப்பு: <strong>pesticide</strong>, <strong>seed</strong>, அல்லது <strong>fertilizer</strong> என இருக்க வேண்டும்.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">CSV கோப்பை தேர்ந்தெடுக்கவும் (.csv file)</label>
+        <input type="file" id="csv-file-input" accept=".csv" class="form-control">
+      </div>
+
+      <!-- Preview Table -->
+      <div id="csv-preview-container" style="display: none; margin-top: 14px;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 6px;">
+          முன்னோட்டம் (<span id="csv-preview-count">0</span> பொருட்கள் தயார்):
+        </div>
+        <div class="table-wrapper" style="max-height: 200px;">
+          <table class="data-table" style="font-size: 11px;">
+            <thead>
+              <tr>
+                <th>பெயர்</th>
+                <th>தமிழ் பெயர்</th>
+                <th>அளவு</th>
+                <th>பிரிவு</th>
+                <th>விலை (₹)</th>
+                <th>இருப்பு</th>
+              </tr>
+            </thead>
+            <tbody id="csv-preview-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+        <button type="button" class="btn btn-outline modal-close" data-modal="modal-csv-import">ரத்து</button>
+        <button type="button" class="btn btn-primary" id="btn-submit-csv-import" disabled>
+          🚀 இறக்குமதி செய் (Start Import)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: ADD / EDIT CUSTOMER                                           -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-customer">
+    <div class="modal-box" style="width: 560px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-customer-title">புதிய வாடிக்கையாளர் சேர்க்க (Add Customer)</h3>
+        <button class="modal-close" data-modal="modal-customer">&times;</button>
+      </div>
+
+      <form id="form-customer">
+        <input type="hidden" id="cust-id">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">விவசாயி / வாடிக்கையாளர் பெயர் *</label>
+            <input type="text" class="form-control" id="cust-name" required placeholder="e.g. ஆர். பெரியசாமி">
+          </div>
+          <div class="form-group">
+            <label class="form-label">தொலைபேசி எண் (Phone)</label>
+            <input type="text" class="form-control" id="cust-phone" maxlength="15" placeholder="e.g. 98421xxxxx">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">கிராமம் (Village / ஊர்)</label>
+            <input type="text" class="form-control" id="cust-village" placeholder="e.g. முசிறி, குணசீலம்">
+          </div>
+          <div class="form-group">
+            <label class="form-label">GSTIN (இருந்தால்)</label>
+            <input type="text" class="form-control" id="cust-gstin" maxlength="15" placeholder="33AAAAA0000A1Z5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">முழு முகவரி (Address)</label>
+          <textarea class="form-control" id="cust-address" rows="2" placeholder="கதவு எண், தெரு, தாலுகா"></textarea>
+        </div>
+
+        <div class="form-group" id="group-cust-opening">
+          <label class="form-label">துவக்க பாக்கி தொகை (Opening Due Balance ₹)</label>
+          <input type="number" step="0.01" class="form-control" id="cust-opening-bal" value="0.00">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline modal-close" data-modal="modal-customer">ரத்து (Cancel)</button>
+          <button type="submit" class="btn btn-primary">💾 சேமிக்கவும் (Save Customer)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: RECORD CUSTOMER PAYMENT                                       -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-customer-payment">
+    <div class="modal-box" style="width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">💵 பாக்கி வசூல் வரவு வைக்க (Record Payment)</h3>
+        <button class="modal-close" data-modal="modal-customer-payment">&times;</button>
+      </div>
+
+      <form id="form-customer-payment">
+        <input type="hidden" id="pay-customer-id">
+
+        <div style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <div style="font-size: 14px; font-weight: 600; color: #fff;" id="pay-customer-name">வாடிக்கையாளர்</div>
+          <div style="font-size: 13px; color: var(--danger); margin-top: 4px;">
+            மொத்த பாக்கி (Total Due): <strong id="pay-customer-due" style="font-family: var(--font-mono); font-size: 16px;">₹0.00</strong>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">தேதி (Date) *</label>
+            <input type="date" class="form-control" id="pay-date" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">வரவு தொகை (Amount Paid ₹) *</label>
+            <input type="number" step="0.01" class="form-control" id="pay-amount" required min="1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">பணம் செலுத்திய முறை (Mode) *</label>
+          <select class="form-control" id="pay-mode">
+            <option value="cash">பணம் (Cash)</option>
+            <option value="upi">UPI / GPay / PhonePe</option>
+            <option value="card">அட்டை (Card)</option>
+            <option value="bank_transfer">வங்கி கணக்கு (Bank Transfer)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">குறிப்பு (Notes)</label>
+          <input type="text" class="form-control" id="pay-notes" placeholder="e.g. பழைய பில் பாக்கி செலுத்தியது">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn btn-outline modal-close" data-modal="modal-customer-payment">ரத்து</button>
+          <button type="submit" class="btn btn-primary">✅ வரவு பதியவும் (Record Payment)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: CUSTOMER LEDGER STATEMENT                                     -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-customer-ledger">
+    <div class="modal-box" style="width: 850px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="ledger-customer-title">📜 வாடிக்கையாளர் கணக்கு ஏடு (Customer Ledger)</h3>
+        <button class="modal-close" data-modal="modal-customer-ledger">&times;</button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 14px;">
+        <div>
+          <div style="font-weight: 700; font-size: 15px; color: #fff;" id="ledger-cust-name">-</div>
+          <div style="font-size: 12px; color: var(--text-muted);" id="ledger-cust-contact">-</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; color: var(--text-muted);">தற்போதைய பாக்கி (Current Outstanding)</div>
+          <div style="font-size: 20px; font-weight: 700; color: var(--danger); font-family: var(--font-mono);" id="ledger-cust-balance">₹0.00</div>
+        </div>
+      </div>
+
+      <div class="table-wrapper" style="flex: 1; overflow-y: auto;">
+        <table class="data-table" style="font-size: 12px;">
+          <thead>
+            <tr>
+              <th>தேதி</th>
+              <th>வகை</th>
+              <th>பில் எண் / ரசீது</th>
+              <th>பில் தொகை (₹)</th>
+              <th>செலுத்தியது (₹)</th>
+              <th>பாக்கி (₹)</th>
+              <th>குறிப்பு</th>
+            </tr>
+          </thead>
+          <tbody id="ledger-tbody">
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--text-dim); padding: 20px;">
+                பதிவுகள் எதுவும் இல்லை (No ledger records)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+        <button type="button" class="btn btn-secondary modal-close" data-modal="modal-customer-ledger">மூடு (Close)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: NEW PURCHASE (STOCK INWARD)                                   -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-purchase">
+    <div class="modal-box" style="width: 880px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 class="modal-title">📥 புதிய சரக்கு கொள்முதல் பதிவு (Stock Inward Entry)</h3>
+        <button class="modal-close" data-modal="modal-purchase">&times;</button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; padding-right: 4px;">
+        <!-- Supplier & Bill Info -->
+        <div class="form-row" style="margin-bottom: 14px;">
+          <div class="form-group">
+            <label class="form-label">சப்ளையர் (Supplier / Company) *</label>
+            <div style="display: flex; gap: 8px;">
+              <select id="pur-supplier-select" class="form-control" required style="flex: 1;">
+                <option value="">சப்ளையரை தேர்வு செய்யவும்...</option>
+              </select>
+              <button type="button" class="btn btn-outline" id="btn-quick-add-supplier" style="padding: 0 10px;" title="புதிய சப்ளையர் சேர்க்க">
+                ➕
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">சப்ளையர் பில் எண் (Invoice No) *</label>
+            <input type="text" id="pur-bill-no" class="form-control" placeholder="e.g. INV-89412" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">கொள்முதல் தேதி (Date) *</label>
+            <input type="date" id="pur-date" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Inward Product Fast Entry Bar -->
+        <div style="background: var(--bg-input); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 14px; border: 1px solid var(--border-color);">
+          <div style="font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px;">
+            சரக்கு உள்ளீடு (Inward Item Entry):
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2.5fr 1fr 1.2fr 1fr 100px; gap: 10px; align-items: end;">
+            <div style="position: relative;">
+              <label class="form-label" style="font-size: 11px;">பொருள் (Product)</label>
+              <input type="text" id="pur-prod-search" class="form-control" placeholder="மருந்து பெயர் தேட..." autocomplete="off">
+              <input type="hidden" id="pur-selected-prod-id">
+
+              <div id="pur-prod-dropdown" class="card" style="display: none; position: absolute; top: 60px; left: 0; width: 100%; max-height: 200px; overflow-y: auto; z-index: 3000; padding: 4px;"></div>
+            </div>
+
+            <div>
+              <label class="form-label" style="font-size: 11px;">வரவு அளவு (Qty)</label>
+              <input type="number" id="pur-item-qty" class="form-control" min="0.01" step="any" value="10">
+            </div>
+
+            <div>
+              <label class="form-label" style="font-size: 11px;">கொள்முதல் விலை (Rate ₹)</label>
+              <input type="number" id="pur-item-rate" class="form-control" step="0.01" value="0.00">
+            </div>
+
+            <div>
+              <label class="form-label" style="font-size: 11px;">GST %</label>
+              <input type="number" id="pur-item-gst" class="form-control" step="0.01" value="18">
+            </div>
+
+            <div>
+              <button type="button" class="btn btn-primary" id="btn-add-purchase-item" style="width: 100%; height: 38px;">
+                ➕ சேர்
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inward Items Table -->
+        <div class="table-wrapper" style="max-height: 200px; margin-bottom: 14px;">
+          <table class="data-table" style="font-size: 12px;">
+            <thead>
+              <tr>
+                <th style="width: 35px;">எண்</th>
+                <th>பொருளின் பெயர் (Product)</th>
+                <th>அளவு</th>
+                <th style="text-align: right;">வரவு அளவு</th>
+                <th style="text-align: right;">விலை (₹)</th>
+                <th style="text-align: right;">GST %</th>
+                <th style="text-align: right;">தொகை (₹)</th>
+                <th style="width: 35px; text-align: center;">நீக்கு</th>
+              </tr>
+            </thead>
+            <tbody id="pur-items-tbody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-dim); padding: 25px;">
+                  பொருட்கள் எதுவும் சேர்க்கப்படவில்லை (Add inward products above)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Inward Totals & Payment Settlement -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px;">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">மொத்த கொள்முதல் தொகை (Total ₹)</label>
+              <input type="text" id="pur-total-display" class="form-control" readonly style="font-size: 18px; font-weight: 700; color: var(--primary); font-family: var(--font-mono);" value="₹0.00">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">செலுத்திய தொகை (Paid ₹) *</label>
+              <input type="number" step="0.01" id="pur-paid-amount" class="form-control" value="0.00">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">சப்ளையர் பாக்கி (Due ₹)</label>
+              <input type="text" id="pur-due-display" class="form-control" readonly style="font-size: 18px; font-weight: 700; color: var(--danger); font-family: var(--font-mono);" value="₹0.00">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label class="form-label">கொள்முதல் குறிப்பு (Notes)</label>
+            <input type="text" id="pur-notes" class="form-control" placeholder="லாரி ரசீது எண், போக்குவரத்து குறிப்பு...">
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 0;">
+            <input type="checkbox" id="pur-update-price-check" checked>
+            <label for="pur-update-price-check" style="cursor: pointer; color: var(--text-muted); font-size: 12px;">
+              பொருட்களின் தற்போதைய கொள்முதல் விலையை தானாக புதுப்பிக்கவும் (Update product purchase price)
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
+        <button type="button" class="btn btn-outline modal-close" data-modal="modal-purchase">ரத்து</button>
+        <button type="button" class="btn btn-primary" id="btn-save-purchase">
+          💾 கொள்முதலை சேமிக்கவும் (Save & Inward Stock)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: SUPPLIERS DIRECTORY                                           -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-suppliers">
+    <div class="modal-box" style="width: 720px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 class="modal-title">🏢 சப்ளையர்கள் பட்டியல் (Supplier Directory)</h3>
+        <button class="modal-close" data-modal="modal-suppliers">&times;</button>
+      </div>
+
+      <!-- Add Supplier Mini Form -->
+      <form id="form-add-supplier" style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+        <div style="font-weight: 600; font-size: 13px; color: var(--primary); margin-bottom: 10px;">
+          ➕ புதிய சப்ளையர் சேர்க்க:
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">சப்ளையர் / நிறுவன பெயர் *</label>
+            <input type="text" id="supp-name" class="form-control" placeholder="e.g. Rallis India Ltd, Coromandel" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">தொலைபேசி எண்</label>
+            <input type="text" id="supp-phone" class="form-control" placeholder="e.g. 94432xxxxx">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">GSTIN</label>
+            <input type="text" id="supp-gstin" class="form-control" placeholder="33AAAAA0000A1Z5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">முகவரி</label>
+            <input type="text" id="supp-address" class="form-control" placeholder="திருச்சி, தமிழ்நாடு">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+          <button type="submit" class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;">
+            சேமிக்க (Save Supplier)
+          </button>
+        </div>
+      </form>
+
+      <!-- Suppliers List -->
+      <div class="table-wrapper" style="flex: 1; overflow-y: auto;">
+        <table class="data-table" style="font-size: 12px;">
+          <thead>
+            <tr>
+              <th style="width: 40px;">எண்</th>
+              <th>சப்ளையர் பெயர்</th>
+              <th>தொலைபேசி</th>
+              <th>GSTIN</th>
+              <th>முகவரி</th>
+            </tr>
+          </thead>
+          <tbody id="suppliers-tbody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">
+                சப்ளையர்கள் எதுவும் இல்லை (No suppliers found)
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
+        <button type="button" class="btn btn-secondary modal-close" data-modal="modal-suppliers">மூடு</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: VIEW PURCHASE DETAILS                                         -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-purchase-detail">
+    <div class="modal-box" style="width: 750px; max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="pur-detail-title">📥 கொள்முதல் விவரம் (Purchase Inward)</h3>
+        <button class="modal-close" data-modal="modal-purchase-detail">&times;</button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 14px;">
+        <div>
+          <div style="font-weight: 700; font-size: 15px; color: #fff;" id="pur-detail-supplier">-</div>
+          <div style="font-size: 12px; color: var(--text-muted);" id="pur-detail-meta">-</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; color: var(--text-muted);">மொத்த கொள்முதல்</div>
+          <div style="font-size: 20px; font-weight: 700; color: var(--primary); font-family: var(--font-mono);" id="pur-detail-total">₹0.00</div>
+        </div>
+      </div>
+
+      <div class="table-wrapper" style="flex: 1; overflow-y: auto;">
+        <table class="data-table" style="font-size: 12px;">
+          <thead>
+            <tr>
+              <th style="width: 35px;">எண்</th>
+              <th>மருந்து / விதை பெயர்</th>
+              <th>அளவு</th>
+              <th style="text-align: right;">வரவு எண்ணிக்கை</th>
+              <th style="text-align: right;">விலை (₹)</th>
+              <th style="text-align: right;">GST %</th>
+              <th style="text-align: right;">தொகை (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="pur-detail-tbody"></tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 16px;">
+        <button type="button" class="btn btn-secondary modal-close" data-modal="modal-purchase-detail">மூடு</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: ABOUT SOFTWARE                                                -->
+  <!-- ==================================================================== -->
+  <div class="modal-overlay" id="modal-about">
+    <div class="modal-box" style="width: 480px; text-align: center;">
+      <div class="modal-header" style="justify-content: space-between;">
+        <h3 class="modal-title">ℹ️ மென்பொருள் பற்றி (About Software)</h3>
+        <button class="modal-close" data-modal="modal-about">&times;</button>
+      </div>
+      <div style="padding: 24px 16px;">
+        <div style="font-size: 42px; margin-bottom: 12px;">⚡</div>
+        <h2 style="font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px;">Nexus Billing Software</h2>
+        <div style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 12px; font-weight: 600; padding: 3px 12px; border-radius: 12px; margin-bottom: 22px;">
+          Version 1.0.0 (Production Release)
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; text-align: left; font-size: 13px; line-height: 2.2;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">பயன்பாடு (App Name):</span>
+            <strong style="color: #fff;">Nexus Billing Software</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">பதிப்பு (Version):</span>
+            <strong style="color: #fff;">1.0.0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">டெவலப்பர் (Developer):</span>
+            <strong style="color: var(--primary);">SNK TECH Team</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 4px;">
+            <span style="color: var(--text-muted);">பதிப்புரிமை (Copyright):</span>
+            <strong style="color: #fff;">© 2026 SNK TECH</strong>
+          </div>
+        </div>
+
+        <div style="margin-top: 22px;">
+          <button type="button" class="btn btn-primary modal-close" data-modal="modal-about" style="min-width: 140px;">
+            சரி (Close)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/stubs.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/customers.js"></script>
+  <script src="js/billing.js"></script>
+  <script src="js/purchases.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

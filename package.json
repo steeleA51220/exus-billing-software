@@ -1,0 +1,56 @@
+{
+  "name": "sri-kumaran-billing",
+  "version": "1.0.0",
+  "description": "Desktop Billing & Stock Management Software - Nexus Billing Software",
+  "main": "src/main/main.js",
+  "author": "SNK TECH Team",
+  "license": "ISC",
+  "scripts": {
+    "start": "node start.js",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win"
+  },
+  "dependencies": {
+    "better-sqlite3": "12.11.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2"
+  },
+  "devDependencies": {
+    "electron": "^29.4.6",
+    "electron-builder": "^24.13.3",
+    "electron-rebuild": "^3.2.9"
+  },
+  "build": {
+    "appId": "com.nexus.billing",
+    "productName": "Nexus Billing Software",
+    "copyright": "Copyright © 2026 SNK TECH",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icons/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Nexus Billing Software",
+      "runAfterFinish": true
+    }
+  }
+}
